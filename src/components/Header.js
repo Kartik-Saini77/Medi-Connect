@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaSearch } from 'react-icons/fa'; // Import the search icon
 
-const Header = () => {
+const Header = ()=> {
   return (
     <nav className="navbar">
       <div className="navbar__logo">MyWebsite</div>
