@@ -20,6 +20,7 @@ body {
     background-color: #f1c6a9;
     padding: 10px 20px;
     height: 80px;
+    width: 100vw;
     box-shadow: 0px 2px 7px rgb(198, 198, 198);
 }
 

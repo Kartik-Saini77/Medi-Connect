@@ -1,13 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Header from "./components/header";
+import { BrowserRouter, Routes, Route } from "react-router";
+import Header from "./components/Header";
 import Body from "./components/Body";
 
 const App = () => {
     return (
         <>
-            <Header />
-            <Body />
+            <BrowserRouter>
+                <Header />
+                <Routes>
+                    <Route path="/" element={<Body />} />
+                    <Route path="/Contacts" element={<></>} />
+                    <Route path="/Volunteers" element={<></>} />
+                    <Route path="/Requests" element={<></>} />
+                </Routes>
+            </BrowserRouter>
         </>
     );
 };
