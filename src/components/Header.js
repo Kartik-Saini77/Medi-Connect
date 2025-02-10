@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from "react-router";
+import Icon from './assets/images/search-icon.png';
 
 const Header = ()=> {
   return (
@@ -12,7 +13,8 @@ const Header = ()=> {
         <Link to='/Requests' className="navbar_button">Requests</Link>
       </div>
       <div className="navbar_search">
-      <input
+        <img src={Icon} alt="search" className="navbar_search-icon" />
+        <input
           type="text"
           className="navbar_search-input"
           placeholder="Search Medical Supplies"
