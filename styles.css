@@ -36,6 +36,7 @@ body {
 }
 
 .navbar_button {
+  text-decoration: none;
   background-color: #ee8640;
   color: white;
   border: none;
