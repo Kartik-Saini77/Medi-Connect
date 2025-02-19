@@ -4,7 +4,6 @@ const Body = ()=> {
     return (
     <>
         <main>
-            {/* <h1>MEDICONNECT</h1> */}
             <div className='home_div1'>
                 <img src='https://media.istockphoto.com/id/512278456/photo/group-of-doctors-at-the-hospital.jpg?s=612x612&w=0&k=20&c=EPPHeKuq0YabUC-QCWlAOhTfIZAAPtrwQ96V_Wp0oKY=' alt='img' className='home_main_img'></img>
                 <div className='home_div2'>

@@ -134,3 +134,53 @@ main {
 .home_help:hover {
     background-color: #0056b3;
 }
+
+.cards_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    justify-items: center;
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    padding: 20px;
+    width: 400px;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.card_img {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.card_content {
+    text-align: left;
+    margin-right: 15px;
+    flex: 1;
+}
+
+.card_name {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.card_roll,
+.card_location,
+.card_type {
+    font-size: 1em;
+    margin-bottom: 0.5em;
+    color: #555;
+}

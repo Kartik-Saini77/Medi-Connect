@@ -133,4 +133,52 @@ main {
 .home_help:hover {
   background-color: #0056b3;
 }
+
+.cards_container {
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  gap: 20px;
+  display: grid;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  justify-content: space-between;
+  align-items: center;
+  width: 400px;
+  margin: 20px;
+  padding: 20px;
+  transition: transform .3s;
+  display: flex;
+  box-shadow: 0 4px 8px #0000001a;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card_img {
+  object-fit: cover;
+  border-radius: 10px;
+  width: 100px;
+  height: 100px;
+}
+
+.card_content {
+  text-align: left;
+  flex: 1;
+  margin-right: 15px;
+}
+
+.card_name {
+  margin-bottom: .5em;
+  font-size: 1.5em;
+}
+
+.card_roll, .card_location, .card_type {
+  color: #555;
+  margin-bottom: .5em;
+  font-size: 1em;
+}
 /*# sourceMappingURL=index.1303bb05.css.map */
