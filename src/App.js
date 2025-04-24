@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import Header from "./components/Header";
 import Body from "./components/Body";
 import Cards from "./components/Cards";
+import LoginForm from "./components/LoginForm";
 
 const App = () => {
     return (
@@ -12,6 +13,7 @@ const App = () => {
                 <Header />
                 <Routes>
                     <Route path="/" element={<Body />} />
+                    <Route path="/Login" element={<LoginForm />} />
                     <Route path="/Requests" element={<Cards />} />
                     <Route path="/Volunteers" element={<></>} />
                     <Route path="/Contacts" element={<></>} />
