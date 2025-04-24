@@ -8,9 +8,9 @@ const Header = ()=> {
       <div className="navbar_logo">MEDICONNECT</div>
       <div className="navbar_links">
         <Link to='/' className="navbar_button">Home</Link>
-        <Link to='/Requests' className="navbar_button">Requests</Link>
-        <Link to='/Volunteers' className="navbar_button">Volunteers</Link>
-        <Link to='/Contacts' className="navbar_button">Contact Us</Link>
+        <Link to='/requests' className="navbar_button">Requests</Link>
+        <Link to='/volunteers' className="navbar_button">Volunteers</Link>
+        <Link to='/contacts' className="navbar_button">Contact Us</Link>
       </div>
       <div className="navbar_search">
         <img src={Icon} alt="search" className="navbar_search-icon" />

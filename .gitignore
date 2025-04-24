@@ -2,8 +2,13 @@
 node_modules/
 npm-debug.log
 yarn-error.log
-.parcel-cache
-/dist
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+.parcel-cache/
+dist/
 
 # Logs
 logs/
