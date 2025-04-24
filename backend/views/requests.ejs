@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Requests</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 60%;
+      background-color: #3bdd6b;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .request {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .request p {
+      margin: 0;
+    }
+    .request strong {
+      color: #007BFF;
+    }
+    .bt {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .bt:hover {
+      background-color: #ff1a1a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Submitted Requests</h1>
+    <div id="requests">
+      <% requests.forEach(request => { %>
+        <div class="request">
+          <div>
+            <p><strong><%= request.user.username %>:</strong> <%= request.content %></p>
+            <p>Phone: <%= request.user.phone %></p>
+          </div>
+          <form action="/requests/delete" method="POST">
+            <input type="hidden" name="requestId" value="<%= request._id %>">
+            <button type="submit" class="bt">Delete Request</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+    <div>
+        <h1>Your issue will be resolved as soon as possible </h1>
+        <h2 style="color: rgb(229, 41, 88);">Our Volunteers are trying to connect to you.......</h2>
+    </div>
+  </div>
+</body>
+</html>
