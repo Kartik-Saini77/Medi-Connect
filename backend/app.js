@@ -1,111 +1,134 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+
 const userModel = require("./models/user");
 const reqModel = require("./models/req");
+
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 
-app.set("view engine", "ejs");
+// Enable CORS for frontend
+app.use(cors({
+  origin: "http://localhost:1234", // Your React frontend port
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
-  res.render("index");
-});
-
-app.get('/login', (req, res) => {
-  res.render("login");
-});
-
-app.get('/issues', isLoggedIn, (req, res) => {
-  res.render("issues");
-});
-
-app.get('/requests', isLoggedIn, async (req, res) => {
-  let requests = await reqModel.find().populate('user', 'username phone');
-  res.render("requests", { requests });
-});
+// API Routes
 
 app.post('/create', async (req, res) => {
-  let { username, name, email, password, phone } = req.body;
-  
-  let user = await userModel.findOne({ email });
-  if (user) return res.status(400).send("User already exists");
-  
-  bcrypt.genSalt(10, function(err, salt) {
-    if (err) return res.status(500).send("Error generating salt");
-    bcrypt.hash(password, salt, async (err, hash) => {
-      if (err) return res.status(500).send("Error hashing password");
-      let user = await userModel.create({
-        username,
-        name,
-        email,
-        password: hash,
-        phone
+  try {
+    const { username, name, email, password, phone } = req.body;
+
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) return res.status(500).json({ message: "Error generating salt" });
+
+      bcrypt.hash(password, salt, async (err, hash) => {
+        if (err) return res.status(500).json({ message: "Error hashing password" });
+
+        const user = await userModel.create({
+          username,
+          name,
+          email,
+          password: hash,
+          phone
+        });
+
+        const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
+        res.cookie("token", token, { httpOnly: true });
+        res.status(200).json({ message: "User created successfully", token });
       });
-      let token = jwt.sign({ email: email, userid: user._id }, "secretkey");
-      res.cookie("token", token);
-      res.redirect("/issues");
-      console.log(user);
     });
-  });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error while registering user" });
+  }
 });
 
 app.post('/login', async (req, res) => {
-  let { email, password } = req.body;
-  
-  let user = await userModel.findOne({ email });
-  if (!user) return res.status(400).send("something went wrong");
-  
-  bcrypt.compare(password, user.password, function(err, result) {
-    if (err) return res.status(500).send("Error comparing passwords");
-    if (result) {
-      let token = jwt.sign({ email: email, userid: user._id }, "secretkey");
-      res.cookie("token", token);
-      res.status(200).redirect("/issues");
-    } else {
-      res.redirect("/login");
-    }
-  });
+  try {
+    const { email, password } = req.body;
+
+    const user = await userModel.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    bcrypt.compare(password, user.password, (err, result) => {
+      if (err) return res.status(500).json({ message: "Error comparing passwords" });
+
+      if (result) {
+        const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
+        res.cookie("token", token, { httpOnly: true });
+        res.status(200).json({ message: "Login successful", token });
+      } else {
+        res.status(401).json({ message: "Invalid credentials" });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error during login" });
+  }
 });
 
 app.get('/logout', (req, res) => {
-  res.cookie("token", "");
-  res.redirect("/login");
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logged out successfully" });
 });
 
 app.post('/requests', isLoggedIn, async (req, res) => {
-  let user = await userModel.findOne({ email: req.user.email });
-  let { content } = req.body;
-  
-  let newRequest = await reqModel.create({
-    user: user._id,
-    content
-  });
-  user.requests.push(newRequest._id);
-  await user.save();
-  res.redirect("/requests");
+  try {
+    const user = await userModel.findOne({ email: req.user.email });
+    const { content } = req.body;
+
+    const newRequest = await reqModel.create({
+      user: user._id,
+      content
+    });
+
+    user.requests.push(newRequest._id);
+    await user.save();
+
+    res.status(200).json({ message: "Request submitted" });
+  } catch (err) {
+    res.status(500).json({ message: "Error submitting request" });
+  }
 });
 
 app.post('/requests/delete', isLoggedIn, async (req, res) => {
-  let { requestId } = req.body;
-  await reqModel.findByIdAndDelete(requestId);
-  res.redirect("/requests");
+  try {
+    const { requestId } = req.body;
+    await reqModel.findByIdAndDelete(requestId);
+    res.status(200).json({ message: "Request deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting request" });
+  }
 });
 
 function isLoggedIn(req, res, next) {
-  if (req.cookies.token === "") {
-    res.redirect("/login");
-  } else {
-    let data = jwt.verify(req.cookies.token, "secretkey");
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+  try {
+    const data = jwt.verify(token, "secretkey");
     req.user = data;
     next();
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
   }
 }
 
+// Server Start
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
