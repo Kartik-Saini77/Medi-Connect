@@ -5,11 +5,16 @@ const requestSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-    date: {
+    content: String,
+    status: {
+        type: String,
+        enum: ['pending', 'in_progress', 'resolved'],
+        default: 'pending'
+    },
+    submittedAt: {
         type: Date,
         default: Date.now
-    },
-    content: String,
+    }
 });
 
 const Request = mongoose.model('Request', requestSchema);

@@ -12,7 +12,7 @@ const cors = require('cors');
 
 // Enable CORS for frontend
 app.use(cors({
-  origin: "http://localhost:1234", // Your React frontend port
+  origin: "http://localhost:1234", // React frontend port
   credentials: true
 }));
 
@@ -86,7 +86,11 @@ app.get('/logout', (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-app.post('/requests', isLoggedIn, async (req, res) => {
+//TODO: update the req schema according to data.json in react components folder
+//TODO: update user role to volunteer
+//TODO: update request status to in_progress or resolved
+
+app.post('/requests', isLoggedIn, async (req, res) => { //TODO: fix this according to schema and make a get request to fetch all requests
   try {
     const user = await userModel.findOne({ email: req.user.email });
     const { content } = req.body;
@@ -117,7 +121,8 @@ app.post('/requests/delete', isLoggedIn, async (req, res) => {
 
 function isLoggedIn(req, res, next) {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
+  if (!token) 
+    return res.status(401).json({ message: "Unauthorized" });
 
   try {
     const data = jwt.verify(token, "secretkey");

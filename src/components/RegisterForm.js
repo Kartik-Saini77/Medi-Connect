@@ -32,7 +32,7 @@ export default function RegisterForm() {
             }
 
            
-             localStorage.setItem("token", data.token);
+            //  localStorage.setItem("token", data.token);
 
             navigate("/"); 
         } catch (err) {
@@ -43,7 +43,7 @@ export default function RegisterForm() {
         }
     };
 
-    return (
+    return (    // TODO: Add an option to register as a volunteer
         <div className="min-h-[calc(100vh-80px)] flex flex-col flex-grow items-center justify-center bg-gray-100 px-4 py-6">
             <div className="w-full max-w-md mx-auto p-4 sm:p-5 border-2 rounded-xl bg-white shadow-md">
                 <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">Register</h1>

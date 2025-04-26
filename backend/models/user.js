@@ -7,6 +7,11 @@ const userSchema = mongoose.Schema({
     email: String,
     password: String,
     phone: String,
+    role: {
+        type: String,
+        enum: ['volunteer', 'user'],
+        default: 'user'
+    },
     requests: [
         {
             type: mongoose.Schema.Types.ObjectId,

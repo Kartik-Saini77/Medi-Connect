@@ -1,24 +1,29 @@
 [
     {
-        "name":"dj",
-        "roll":"bt33cse1100",
-        "location":"srinagaar",
-        "type":"fetch medi",
-        "img":"https://thecareercounter.com/wp-content/uploads/Best_High_School_Resume_Sample.jpg"
-
-},
-    {
-        "name":"djdsfs",
-        "roll":"bt34cse1100",
-        "location":"srinagaru",
-        "type":"fetch medi",
-          "img":"https://thecareercounter.com/wp-content/uploads/Best_High_School_Resume_Sample.jpg"
+        "_id": "1",
+        "name": "Divyanshu Joshi",
+        "roll": "bt33cse006",
+        "content": "High fever and cough",
+        "submittedAt": "2023-11-15T12:30:45.000Z",
+        "status": "pending",
+        "phone": "1234567890"
     },
     {
-        "name":"djdasha",
-        "roll":"bt543cse1100",
-        "location":"srinagaraa",
-        "type":"fetch medi",
-          "img":"https://thecareercounter.com/wp-content/uploads/Best_High_School_Resume_Sample.jpg"
+        "_id": "2",
+        "name": "Abhishek Rana",
+        "roll": "bt34cse010",
+        "content": "Headache and dizziness",
+        "submittedAt": "2023-11-16T09:15:30.000Z",
+        "status": "in_progress",
+        "phone": "1234567890"
+    },
+    {
+        "_id": "3",
+        "name": "Kartik Saini",
+        "roll": "bt543cse007",
+        "content": "Stomach pain and nausea",
+        "submittedAt": "2023-11-17T14:20:00.000Z",
+        "status": "resolved",
+        "phone": "1234567890"
     }
 ]

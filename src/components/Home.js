@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router';
 
-const Body = () => {
+export default function Home() {
     return (
         <>
             <main>
@@ -13,12 +14,12 @@ const Body = () => {
                                 Our aim is to serve as an accessible platform for students to seek medical assistance, connect with volunteers, and access essential health. We aim to streamline access to first-aid guidelines, health-related information, and volunteer support.
                             </p>
                         </div>
-                        <button className='home_help'>Need Help?</button>
+                        <Link to="/new-request">
+                            <button className='home_help'>Need Help?</button>
+                        </Link>
                     </div>
                 </div>
             </main>
         </>
     );
-};
-
-export default Body;
+}
