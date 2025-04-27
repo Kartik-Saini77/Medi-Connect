@@ -7,7 +7,7 @@ const Header = ()=> {
   const location = useLocation();
 
   useEffect(() => {
-    // Simply check if the token cookie exists
+    
     const hasToken = document.cookie.includes('token=');
     setIsLoggedIn(hasToken);
   }, []);
@@ -37,6 +37,7 @@ const Header = ()=> {
         <Link to='/requests' className="navbar_button">Requests</Link>
         <Link to='/volunteers' className="navbar_button">Volunteers</Link>
         <Link to='/contacts' className="navbar_button">Contact Us</Link>
+        <Link to='/donate' className="navbar_button">Donate for a Cause</Link>
       </div>
       {renderRightSection()}
     </nav>

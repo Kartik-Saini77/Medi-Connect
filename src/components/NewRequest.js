@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router'
 
 export default function NewRequest() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        roll: '',
         content: ''
     });
     const [error, setError] = useState('');
@@ -16,22 +15,25 @@ export default function NewRequest() {
         setIsLoading(true);
 
         try {
-            // const response = await fetch('http://localhost:3000/requests', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     credentials: 'include',
-            //     body: JSON.stringify(formData)
-            // });
+            const response = await fetch('http://localhost:3000/requests', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', 
+                body: JSON.stringify({
+                    content: formData.content
+                })
+            });
 
-            // const data = await response.json();
+            const data = await response.json();
 
-            // if (!response.ok) {
-            //     throw new Error(data.message || 'Failed to submit request');
-            // }
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to submit request');
+            }
 
-            navigate('/requests');
+            // Redirect to requests page after successful submission
+            navigate('/done');
         } catch (err) {
             setError(err.message || 'Something went wrong');
         } finally {
@@ -53,17 +55,19 @@ export default function NewRequest() {
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="roll" className="block text-sm font-medium text-gray-700 mb-1">
-                            Roll Number
-                        </label>
-                        <input type="text" id="roll" name="roll" value={formData.roll} onChange={handleChange} className="w-full p-2 border rounded-md" placeholder="Enter your roll number" required/>
-                    </div>
-
-                    <div>
                         <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
                             Medical Issue
                         </label>
-                        <textarea id="content" name="content" value={formData.content} onChange={handleChange} rows="4" className="w-full p-2 border rounded-md" placeholder="Describe your medical issue" required/>
+                        <textarea
+                            id="content"
+                            name="content"
+                            value={formData.content}
+                            onChange={handleChange}
+                            rows="4"
+                            className="w-full p-2 border rounded-md"
+                            placeholder="Describe your medical issue"
+                            required
+                        />
                     </div>
 
                     {error && (
@@ -72,7 +76,11 @@ export default function NewRequest() {
                         </div>
                     )}
 
-                    <button type="submit" disabled={isLoading} className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors disabled:bg-blue-300">
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors disabled:bg-blue-300"
+                    >
                         {isLoading ? 'Submitting...' : 'Submit Request'}
                     </button>
                 </form>

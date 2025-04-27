@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router"; 
 import { useState, useEffect } from "react";
 
 export default function LoginForm() {
@@ -24,10 +24,8 @@ export default function LoginForm() {
         try {
             const response = await fetch("http://localhost:3000/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include", 
+                headers: { "Content-Type": "application/json" },
+                credentials: "include", // ✅ send cookies
                 body: JSON.stringify({ email, password }),
             });
 
@@ -37,8 +35,7 @@ export default function LoginForm() {
                 throw new Error(data.message || "Login failed");
             }
 
-            
-            navigate("/");
+            navigate("/new");
         } catch (err) {
             setError(err.message || "Something went wrong. Please try again.");
             console.error(err);
@@ -48,24 +45,49 @@ export default function LoginForm() {
     };
 
     return (
-        <div className="min-h-[calc(100vh-80px)] flex flex-col flex-grow items-center justify-center bg-gray-100 px-4 py-6 p-4">
-            <div className="w-full max-w-md mx-auto p-4 sm:p-5 border-2 rounded-xl">
-                <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">Login</h1>
-                
-                <label htmlFor="email" className="text-gray-900 block mb-2">Email:</label>
-                <input id="email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-12 sm:h-10 border-2 rounded-sm mb-4 p-2" placeholder="Enter your email" />
+        <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center bg-gray-100 px-4 py-6">
+            <div className="w-full max-w-md p-6 border-2 rounded-xl bg-white">
+                <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
 
-                <label htmlFor="password" className="text-gray-900 block mb-2">Password:</label>
-                <input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full h-12 sm:h-10 border-2 rounded-sm mb-4 p-2" placeholder="Enter your password" />
+                <form onSubmit={handleLogin}>
+                    <label htmlFor="email" className="block mb-2 text-gray-700">Email:</label>
+                    <input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full border rounded p-2 mb-4"
+                        placeholder="Enter your email"
+                        required
+                    />
 
-                <div className="flex items-center mb-4">
-                    <input type="checkbox" id="showPassword" className="size-4" onChange={() => setShowPassword(!showPassword)} />
-                    <label htmlFor="showPassword" className="text-gray-900 ml-2">Show Password</label>
+                    <label htmlFor="password" className="block mb-2 text-gray-700">Password:</label>
+                    <input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full border rounded p-2 mb-4"
+                        placeholder="Enter your password"
+                        required
+                    />
+
+                    <div className="flex items-center mb-4">
+                        <input type="checkbox" id="showPassword" onChange={() => setShowPassword(!showPassword)} />
+                        <label htmlFor="showPassword" className="ml-2 text-gray-700">Show Password</label>
+                    </div>
+
+                    <button type="submit" disabled={isLoading} className="w-full bg-gray-800 text-white rounded p-2">
+                        {isLoading ? "Logging in..." : "Login"}
+                    </button>
+
+                    {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
+                </form>
+
+                <div className="text-center mt-6">
+                    <Link to="/register" className="text-blue-700 hover:underline">Don't have an account? Register here</Link>
                 </div>
-                <button onClick={handleLogin} disabled={isLoading} className="w-full h-12 sm:h-10 bg-gray-800 text-white rounded-md mb-4 cursor-pointer">{isLoading ? "Logging in..." : "Login"}</button>
-                {error && <p className="text-center text-red-600">{error}</p>}
             </div>
-            <Link to="/register" className="text-blue-900 mt-4">Don't have an account? Register here</Link>
         </div>
     );
 }

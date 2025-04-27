@@ -1,26 +1,24 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-
 const userModel = require("./models/user");
 const reqModel = require("./models/req");
-
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 
-// Enable CORS for frontend
 app.use(cors({
-  origin: "http://localhost:1234", // React frontend port
-  credentials: true
+  origin: "http://localhost:1234", 
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// API Routes
 
 app.post('/create', async (req, res) => {
   try {
@@ -31,31 +29,27 @@ app.post('/create', async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    bcrypt.genSalt(10, (err, salt) => {
-      if (err) return res.status(500).json({ message: "Error generating salt" });
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
 
-      bcrypt.hash(password, salt, async (err, hash) => {
-        if (err) return res.status(500).json({ message: "Error hashing password" });
-
-        const user = await userModel.create({
-          username,
-          name,
-          email,
-          password: hash,
-          phone
-        });
-
-        const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
-        res.cookie("token", token, { httpOnly: true });
-        res.status(200).json({ message: "User created successfully", token });
-      });
+    const user = await userModel.create({
+      username,
+      name,
+      email,
+      password: hash,
+      phone
     });
+
+    const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
+    res.cookie("token", token, { httpOnly: true, sameSite: "Lax" });
+    res.status(200).json({ message: "User created successfully", token });
 
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error while registering user" });
   }
 });
+
 
 app.post('/login', async (req, res) => {
   try {
@@ -64,48 +58,130 @@ app.post('/login', async (req, res) => {
     const user = await userModel.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
 
-    bcrypt.compare(password, user.password, (err, result) => {
-      if (err) return res.status(500).json({ message: "Error comparing passwords" });
+    const result = await bcrypt.compare(password, user.password);
 
-      if (result) {
-        const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
-        res.cookie("token", token, { httpOnly: true });
-        res.status(200).json({ message: "Login successful", token });
-      } else {
-        res.status(401).json({ message: "Invalid credentials" });
-      }
-    });
+    if (result) {
+      const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
+      res.cookie("token", token, { httpOnly: true, sameSite: "Lax" });
+      res.status(200).json({ message: "Login successful", token });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error during login" });
   }
 });
 
+
 app.get('/logout', (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-//TODO: update the req schema according to data.json in react components folder
-//TODO: update user role to volunteer
-//TODO: update request status to in_progress or resolved
 
-app.post('/requests', isLoggedIn, async (req, res) => { //TODO: fix this according to schema and make a get request to fetch all requests
+function isLoggedIn(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
+
   try {
-    const user = await userModel.findOne({ email: req.user.email });
+    const data = jwt.verify(token, "secretkey");
+    req.user = data;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+}
+
+
+app.post('/become-volunteer', isLoggedIn, async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.userid);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role === 'volunteer') {
+      return res.status(400).json({ message: "You are already a volunteer" });
+    }
+
+    user.role = 'volunteer';
+    await user.save();
+
+    res.status(200).json({ message: "Successfully became a volunteer" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating role" });
+  }
+});
+
+
+app.get('/requests', isLoggedIn, async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.userid);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role !== 'volunteer') {
+      return res.status(403).json({ message: "Access forbidden, you must be a volunteer to view requests" });
+    }
+
+
+    const requests = await reqModel.find().populate('user', 'username phone').sort({ submittedAt: -1 });
+
+    
+    console.log(requests);
+
+    res.status(200).json(requests);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching requests" });
+  }
+});
+
+
+
+app.post('/requests', isLoggedIn, async (req, res) => {
+  try {
     const { content } = req.body;
+    if (!content) {
+      return res.status(400).json({ message: "Content is required" });
+    }
 
-    const newRequest = await reqModel.create({
-      user: user._id,
-      content
-    });
+    const user = await userModel.findOne({ _id: req.user.userid });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    const newRequest = await reqModel.create({ user: user._id, content, status: 'pending', submittedAt: new Date() });
     user.requests.push(newRequest._id);
     await user.save();
 
-    res.status(200).json({ message: "Request submitted" });
+    res.status(200).json({ message: "Request submitted successfully" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Error submitting request" });
+  }
+});
+
+
+app.post('/requests/update-status', isLoggedIn, async (req, res) => {
+  try {
+    const { requestId, status } = req.body;
+    
+    const request = await reqModel.findById(requestId);
+    if (!request) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    request.status = status;
+    await request.save();
+    
+    res.status(200).json({ message: "Request status updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating request status" });
   }
 });
 
@@ -115,25 +191,11 @@ app.post('/requests/delete', isLoggedIn, async (req, res) => {
     await reqModel.findByIdAndDelete(requestId);
     res.status(200).json({ message: "Request deleted" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Error deleting request" });
   }
 });
 
-function isLoggedIn(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) 
-    return res.status(401).json({ message: "Unauthorized" });
-
-  try {
-    const data = jwt.verify(token, "secretkey");
-    req.user = data;
-    next();
-  } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
-  }
-}
-
-// Server Start
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

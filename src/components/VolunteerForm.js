@@ -16,18 +16,19 @@ export default function VolunteerForm() {
 
         setIsLoading(true);
         try {
-            // const response = await fetch('http://localhost:3000/become-volunteer', {
-            //     method: 'POST',
-            //     credentials: 'include',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
+            const response = await fetch('http://localhost:3000/become-volunteer', {
+                method: 'POST',
+                credentials: 'include',  // Ensures cookies (JWT token) are included
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-            // if (!response.ok) {
-            //     throw new Error('Failed to become a volunteer');
-            // }
+            if (!response.ok) {
+                throw new Error('Failed to become a volunteer');
+            }
 
+            // Redirect to requests page after becoming a volunteer
             navigate('/requests');
         } catch (err) {
             setError(err.message);
@@ -73,11 +74,7 @@ export default function VolunteerForm() {
                 <button
                     onClick={handleSubmit}
                     disabled={!agreed || isLoading}
-                    className={`w-full py-3 px-6 rounded-lg text-lg font-medium ${
-                        agreed && !isLoading
-                            ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                            : 'bg-gray-300 cursor-not-allowed text-gray-500'
-                    }`}
+                    className={`w-full py-3 px-6 rounded-lg text-lg font-medium ${agreed && !isLoading ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 cursor-not-allowed text-gray-500'}`}
                 >
                     {isLoading ? 'Processing...' : 'Become a Volunteer'}
                 </button>
