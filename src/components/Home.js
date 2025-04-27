@@ -14,7 +14,7 @@ export default function Home() {
                                 Our aim is to serve as an accessible platform for students to seek medical assistance, connect with volunteers, and access essential health. We aim to streamline access to first-aid guidelines, health-related information, and volunteer support.
                             </p>
                         </div>
-                        <Link to="/new-request">
+                        <Link to="/new">
                             <button className='home_help'>Need Help?</button>
                         </Link>
                     </div>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router";
-import Icon from './assets/images/search-icon.png';
 
 const Header = ()=> {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
