@@ -11,6 +11,7 @@ import NewRequest from "./components/NewRequest";
 import Done from "./components/Done";
 import Cont from "./components/Cont";
 import Donate from "./components/Donate";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
     return (
@@ -19,14 +20,14 @@ const App = () => {
                 <Header />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/register" element={<RegisterForm />} />
                     <Route path="/login" element={<LoginForm/>} />
-                    <Route path="/new" element={<NewRequest />} />
-                    <Route path="/done" element={<Done/>} />
-                    <Route path="/requests" element={<Cards />} />
-                    <Route path="/volunteers" element={<VolunteerForm/>} />
-                    <Route path="/contacts" element={<Cont/>} />
-                    <Route path="/donate" element={<Donate />} />
+                    <Route path="/register" element={<RegisterForm />} />
+                    <Route path="/new" element={<ProtectedRoute><NewRequest /></ProtectedRoute>} />
+                    <Route path="/done" element={<ProtectedRoute><Done/></ProtectedRoute>} />
+                    <Route path="/requests" element={<ProtectedRoute><Cards /></ProtectedRoute>} />
+                    <Route path="/volunteers" element={<ProtectedRoute><VolunteerForm/></ProtectedRoute>} />
+                    <Route path="/contacts" element={<ProtectedRoute><Cont/></ProtectedRoute>} />
+                    <Route path="/donate" element={<ProtectedRoute><Donate /></ProtectedRoute>} />
                 </Routes>
             </BrowserRouter>
         </div>

@@ -68,9 +68,11 @@ export default function RegisterForm() {
                 </button>
 
                 {error && <p className="text-red-600 text-center mt-3">{error}</p>}
-            </div>
 
-            <Link to="/login" className="text-blue-800 mt-4 hover:underline">Already have an account? Login here</Link>
+                <div className="text-center mt-3">
+                    <Link to="/login" className="text-blue-800 mt-4 hover:underline">Already have an account? Login here</Link>
+                </div>
+            </div>
         </div>
     );
 }

@@ -27,7 +27,7 @@ body {
 
 .navbar_links {
   display: flex;
-  gap: 70px;
+  gap: 40px;
 }
 
 .navbar_button {

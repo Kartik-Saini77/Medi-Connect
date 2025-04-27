@@ -41,7 +41,7 @@ app.post('/create', async (req, res) => {
     });
 
     const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
-    res.cookie("token", token, { httpOnly: true, sameSite: "Lax" });
+    res.cookie("token", token, { httpOnly: false, sameSite: 'None', path: '/', secure: true });
     res.status(200).json({ message: "User created successfully", token });
 
   } catch (err) {
@@ -62,7 +62,7 @@ app.post('/login', async (req, res) => {
 
     if (result) {
       const token = jwt.sign({ email: user.email, userid: user._id }, "secretkey");
-      res.cookie("token", token, { httpOnly: true, sameSite: "Lax" });
+      res.cookie("token", token, { httpOnly: false, sameSite: 'None', path: '/', secure: true });
       res.status(200).json({ message: "Login successful", token });
     } else {
       res.status(401).json({ message: "Invalid credentials" });

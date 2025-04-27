@@ -18,7 +18,7 @@ export default function VolunteerForm() {
         try {
             const response = await fetch('http://localhost:3000/become-volunteer', {
                 method: 'POST',
-                credentials: 'include',  // Ensures cookies (JWT token) are included
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -28,7 +28,6 @@ export default function VolunteerForm() {
                 throw new Error('Failed to become a volunteer');
             }
 
-            // Redirect to requests page after becoming a volunteer
             navigate('/requests');
         } catch (err) {
             setError(err.message);

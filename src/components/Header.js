@@ -1,29 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 const Header = ()=> {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    
-    const hasToken = document.cookie.includes('token=');
-    setIsLoggedIn(hasToken);
-  }, []);
+    const hasToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='));
+    setIsLoggedIn(Boolean(hasToken));
+    console.log(isLoggedIn);
+}, [document.cookie]);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/logout', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setIsLoggedIn(false);
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
 
   const renderRightSection = () => {
-    if (location.pathname === "/") {
-      return isLoggedIn ? (
-        <div className="flex gap-4 w-[200px]"></div>
-      ) : (
+    if (isLoggedIn) {
+      return (
         <div className="flex gap-4">
-          <Link to="/login" className="navbar_button">Login</Link>
-          <Link to="/register" className="navbar_button">Sign Up</Link>
+          <button onClick={handleLogout} className="navbar_button">Logout</button>
         </div>
       );
     } else {
       return (
-        <div className="flex gap-4 w-[200px]"></div>
+        <div className="flex gap-4">
+          <Link to="/login" className="navbar_button">Login</Link>
+          <Link to="/register" className="navbar_button">Sign Up</Link>
+        </div>
       );
     }
   };

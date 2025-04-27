@@ -25,7 +25,7 @@ export default function LoginForm() {
             const response = await fetch("http://localhost:3000/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include", // ✅ send cookies
+                credentials: "include",
                 body: JSON.stringify({ email, password }),
             });
 
