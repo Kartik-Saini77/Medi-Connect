@@ -19,10 +19,40 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+const validateNITEmail = (email) => {
+  const emailRegex = /^[a-zA-Z0-9._-]+@nituk\.ac\.in$/;
+  return emailRegex.test(email);
+};
+
+const validatePassword = (password) => {
+  const passwordRegex = /^.{8,}$/;
+  return passwordRegex.test(password);
+};
+
+const validatePhone = (phone) => {
+  const phoneRegex = /^[0-9]\d{9}$/;
+  return phoneRegex.test(phone);
+};
 
 app.post('/create', async (req, res) => {
   try {
     const { username, name, email, password, phone } = req.body;
+
+    if (!validateNITEmail(email)) {
+      return res.status(400).json({ message: "Please use your NIT Uttarakhand email" });
+    }
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({ 
+          message: "Password must be at least 8 characters long" 
+      });
+  }
+
+  if (!validatePhone(phone)) {
+      return res.status(400).json({ 
+          message: "Please enter a valid phone number" 
+      });
+  }
 
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
@@ -54,6 +84,16 @@ app.post('/create', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!validateNITEmail(email)) {
+      return res.status(400).json({ message: "Please use your NIT Uttarakhand email" });
+    }
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({ 
+          message: "Password must be at least 8 characters long" 
+      });
+    }
 
     const user = await userModel.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
