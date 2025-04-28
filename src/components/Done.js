@@ -10,10 +10,7 @@ const Done = () => {
         <h1 className="text-2xl font-semibold mb-4">Success!</h1>
         <p className="text-lg">Your request has been submitted successfully.</p>
         <div className="mt-4 flex justify-center">
-          <button
-            className="bg-white text-green-500 px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition-all"
-            onClick={() => navigate('/')} 
-          >
+          <button className="bg-white text-green-500 px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition-all" onClick={() => navigate('/')} >
             Go Back
           </button>
         </div>

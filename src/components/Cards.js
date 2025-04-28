@@ -4,7 +4,6 @@ import { Link } from "react-router";
 const Cards = () => {
     const [requests, setRequests] = useState([]);
     const [isVolunteer, setIsVolunteer] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchRequests = async () => {
@@ -13,7 +12,6 @@ const Cards = () => {
                     credentials: "include"
                 });
                 if (response.status === 403) {
-                    setError("Access forbidden, you must be a volunteer to view requests");
                     setIsVolunteer(false);
                     return;
                 }
@@ -25,7 +23,7 @@ const Cards = () => {
                 setRequests(data);
                 setIsVolunteer(true);
             } catch (err) {
-                setError(err.message);
+                console.log(err);
             }
         };
 
@@ -50,7 +48,6 @@ const Cards = () => {
                 throw new Error("Failed to update request status");
             }
 
-            // Update the local state
             setRequests(prevRequests => 
                 prevRequests.map(req => 
                     req._id === requestId 
@@ -59,7 +56,7 @@ const Cards = () => {
                 )
             );
         } catch (err) {
-            setError(err.message);
+            console.log(err);
         }
     };
 
@@ -71,8 +68,6 @@ const Cards = () => {
             default: return 'text-gray-600';
         }
     };
-
-    // if (error) return <div className="text-red-600 text-center">{error}</div>;
 
     if (!isVolunteer) {
         return (
@@ -118,7 +113,7 @@ const Cards = () => {
                 <div key={index} className="card bg-white p-6 rounded-lg shadow-md">
                     <div className="card_content">
                         <h1 className="card_name text-xl font-bold mb-2">{request.content}</h1>
-                        {/* Access user details */}
+
                         <h2 className="card_name text-gray-600 mb-2">{request.user?.username}</h2>
                         <p className="text-gray-600 mb-3">Phone: {request.user?.phone}</p>
                         <p className="text-gray-800 mb-3">{request.content}</p>

@@ -32,7 +32,6 @@ export default function NewRequest() {
                 throw new Error(data.message || 'Failed to submit request');
             }
 
-            // Redirect to requests page after successful submission
             navigate('/done');
         } catch (err) {
             setError(err.message || 'Something went wrong');
